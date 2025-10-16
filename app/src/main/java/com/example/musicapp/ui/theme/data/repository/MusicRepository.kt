@@ -1,18 +1,17 @@
 package com.example.musicapp.ui.theme.data.repository
 
-import com.example.musicapp.data.model.Album
-import com.example.musicapp.data.model.AlbumListResponse
-import com.example.musicapp.data.remote.RetrofitClient
+import com.example.musicapp.ui.theme.data.model.Album
+import com.example.musicapp.ui.theme.data.remote.RetrofitClient
 
 
-class MusicRepository {
-    private val apiService = RetrofitClient.apiService
-
-    suspend fun getAlbums(): AlbumListResponse {
-        return apiService.getAlbums()
+class MusicRepository(
+    private val apiService: RetrofitClient = RetrofitClient
+) {
+    suspend fun fetchAlbums(): List<Album> {
+        return apiService.service.getAlbums()
     }
 
-    suspend fun getAlbumDetail(albumId: String): Album {
-        return apiService.getAlbumDetail(albumId)
+    suspend fun fetchAlbumDetail(albumId: Int): Album {
+        return apiService.service.getAlbumDetail(albumId)
     }
 }
