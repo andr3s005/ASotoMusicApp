@@ -16,8 +16,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
@@ -51,12 +53,15 @@ import coil.compose.AsyncImage
 import com.example.musicapp.ui.theme.PrimaryDark
 import com.example.musicapp.ui.theme.data.model.Album
 import com.example.musicapp.ui.theme.data.model.Track
+import com.example.musicapp.ui.theme.presentation.common.MiniPlayer
 import com.example.musicapp.ui.theme.presentation.common.UiState
 
 @Composable
 fun DetailScreen(
     albumId: String?,
-    viewModel: DetailViewModel = viewModel()
+    onBack: () -> Unit = {},
+    viewModel: DetailViewModel = viewModel(),
+
 ) {
     val detailState = viewModel.detailAlbumState.value
 
@@ -77,19 +82,17 @@ fun DetailScreen(
                 }
             }
             is UiState.Success -> {
-                DetailScreenContent(album = detailState.data)
+                DetailScreenContent(album = detailState.data, onBack = onBack)
 
             }
         }
 }
 
 @Composable
-fun DetailScreenContent(album: Album) {
+fun DetailScreenContent(album: Album, onBack: () -> Unit) {
     Column(modifier = Modifier.fillMaxSize()) {
-        // Header (imagen grande, scrim, título y acciones)
-        DetailHeader(album = album)
+        DetailHeader(album = album, onBack = onBack)
 
-        // Contenido principal scrollable
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
@@ -116,7 +119,7 @@ fun DetailScreenContent(album: Album) {
 
             item {
                 Text(
-                    "Track List (10 canciones ficticias)",
+                    "Track List",
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
@@ -130,6 +133,7 @@ fun DetailScreenContent(album: Album) {
                 )
                 TrackListItem(album = album, track = track)
             }
+
         }
     }
 }
@@ -137,14 +141,14 @@ fun DetailScreenContent(album: Album) {
 
 
 @Composable
-fun DetailHeader(album : Album){
+fun DetailHeader(album : Album, onBack: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(300.dp)
     ){
         AsyncImage(
-            model = album.imageUrl,
+            model = album.displayImageUrl,
             contentDescription = "Caratula del album: ${album.title}",
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
@@ -156,18 +160,30 @@ fun DetailHeader(album : Album){
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
-                            Color.Black.copy(alpha = 0.6f),
-                            PrimaryDark.copy(alpha = 0.6f)
+                            Color.Red.copy(alpha = 0.6f),
+                            Color.Black.copy(alpha = 0.6f)
                         )
                     )
                 )
         )
+
+
 
         Column(
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(24.dp)
         ) {
+            IconButton(
+                onClick = onBack,
+                modifier = Modifier
+                    .padding(12.dp)
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color.Black.copy(alpha = 0.35f))
+            ) {
+                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Volver", tint = Color.White)
+            }
             Text(
                 album.title,
                 color = Color.White,
@@ -245,13 +261,12 @@ fun TrackListItem(album: Album, track: Track) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
-            .clickable { /* Tocar canción */ }
+            .clickable {  }
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Imagen del álbum (misma imagen para todas las canciones)
         AsyncImage(
-            model = album.imageUrl,
+            model = album.displayImageUrl,
             contentDescription = "Carátula de ${album.title}",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -261,7 +276,7 @@ fun TrackListItem(album: Album, track: Track) {
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        // Título y Artista
+
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 track.title,
@@ -277,8 +292,8 @@ fun TrackListItem(album: Album, track: Track) {
             )
         }
 
-        // Botón de opciones
-        IconButton(onClick = { /* Más opciones */ }) {
+
+        IconButton(onClick = { }) {
             Icon(
                 imageVector = Icons.Default.MoreVert,
                 contentDescription = "Opciones",
@@ -297,5 +312,5 @@ fun DetailScreenPreview() {
         imageUrl = "https://via.placeholder.com/300",
         description = "This is a sample album used for previewing the DetailScreen composable."
     )
-    DetailScreenContent(album = sampleAlbum)
+    DetailScreenContent(album = sampleAlbum, onBack = {})
 }

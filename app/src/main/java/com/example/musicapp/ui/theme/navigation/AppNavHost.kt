@@ -24,8 +24,14 @@ fun AppNavHost() {
                 navArgument("albumId") { type = NavType.StringType }
             )
         ) { backStackEntry ->
-            val albumId = backStackEntry.arguments?.getString("albumId") ?: return@composable
-            DetailScreen(albumId = albumId)
+            val albumId = backStackEntry.arguments?.getString("albumId")
+            DetailScreen(
+                albumId = albumId,
+                onBack = {
+                    navController.popBackStack()
+                    Unit
+                }
+            )
         }
     }
 }

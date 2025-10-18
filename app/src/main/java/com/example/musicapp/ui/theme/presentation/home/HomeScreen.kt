@@ -263,7 +263,7 @@ fun RecentlyPlayedItem(album: Album, onClick: (String) -> Unit) {
             .fillMaxSize()
             .padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(
-                model = album.imageUrl,
+                model = album.displayImageUrl,
                 contentDescription = album.title,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -290,13 +290,13 @@ fun MiniPlayer(album: Album?, modifier: Modifier = Modifier, onClickPlay: (Album
             .fillMaxWidth()
             .height(64.dp),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = PrimaryDark)
+        colors = CardDefaults.cardColors(containerColor = Color.Red)
     ) {
         Row(modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 12.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                AsyncImage(model = album.imageUrl, contentDescription = album.title, modifier = Modifier
+                AsyncImage(model = album.displayImageUrl, contentDescription = album.title, modifier = Modifier
                     .size(48.dp)
                     .clip(RoundedCornerShape(8.dp)), contentScale = ContentScale.Crop)
                 Spacer(modifier = Modifier.width(12.dp))

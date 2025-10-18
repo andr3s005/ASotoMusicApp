@@ -17,7 +17,7 @@ class DetailActivity : ComponentActivity() {
 
         setContent {
             MusicAppTheme {
-                DetailScreen(albumId = albumId)
+                DetailScreen(albumId = albumId,)
             }
         }
     }
