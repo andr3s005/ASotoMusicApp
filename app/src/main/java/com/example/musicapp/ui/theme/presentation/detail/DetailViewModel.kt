@@ -15,10 +15,10 @@ class DetailViewModel(
     private val _detailAlbumState = mutableStateOf<UiState<Album>>(UiState.Loading)
     val detailAlbumState : State<UiState<Album>> = _detailAlbumState
 
-    fun fetchAlbumDetail(albumId: Int) {
+    fun fetchAlbumDetail(albumId: String) {
         viewModelScope.launch {
             // Solo cargamos si no se ha cargado previamente (o si es otro ID)
-            if (_detailAlbumState.value !is UiState.Success || (_detailAlbumState.value as UiState.Success).data.id != albumId) {
+            if (_detailAlbumState.value !is UiState.Success) {
                 _detailAlbumState.value = UiState.Loading
                 try {
                     val album = repository.fetchAlbumDetail(albumId)

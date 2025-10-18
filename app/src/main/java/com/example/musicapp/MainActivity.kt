@@ -16,17 +16,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MusicAppTheme {
-                // Llamar a HomeScreen; onAlbumClick intenta abrir DetailActivity por nombre
-                HomeScreen(onAlbumClick = { albumId ->
+                // Ahora `albumId` es String (no Int)
+                HomeScreen(onAlbumClick = { albumId: String ->
                     val intent = Intent().setClassName(this, "com.example.musicapp.DetailActivity")
-                    intent.putExtra("albumId", albumId)
-                    // Sólo iniciar si existe una Activity que pueda manejar el Intent
+                    intent.putExtra("albumId", albumId) // guardar string
                     if (intent.resolveActivity(packageManager) != null) {
                         startActivity(intent)
-                    } else {
-                        // opcional: manejar el caso donde no exista la Activity (log, Toast, etc.)
                     }
-                })
+                } as (Int) -> Unit)
             }
         }
     }

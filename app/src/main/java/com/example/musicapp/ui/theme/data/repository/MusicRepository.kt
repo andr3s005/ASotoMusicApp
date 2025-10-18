@@ -11,7 +11,7 @@ class MusicRepository(
         return apiService.service.getAlbums()
     }
 
-    suspend fun fetchAlbumDetail(albumId: Int): Album {
+    suspend fun fetchAlbumDetail(albumId: String): Album {
         return apiService.service.getAlbumDetail(albumId)
     }
 }
