@@ -55,7 +55,7 @@ import com.example.musicapp.ui.theme.presentation.common.UiState
 
 @Composable
 fun DetailScreen(
-    albumId: String,
+    albumId: String?,
     viewModel: DetailViewModel = viewModel()
 ) {
     val detailState = viewModel.detailAlbumState.value
@@ -291,7 +291,7 @@ fun TrackListItem(album: Album, track: Track) {
 @Composable
 fun DetailScreenPreview() {
     val sampleAlbum = Album (
-        id = 1,
+        id = "1",
         title = "Sample Album",
         artist = "Sample Artist",
         imageUrl = "https://via.placeholder.com/300",

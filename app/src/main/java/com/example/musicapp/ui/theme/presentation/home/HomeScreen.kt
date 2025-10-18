@@ -1,5 +1,6 @@
 package com.example.musicapp.ui.theme.presentation.home
 
+import android.R.attr.onClick
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -56,7 +57,7 @@ import com.example.musicapp.ui.theme.presentation.common.MiniPlayer
 
 @Composable
 fun HomeScreen(
-    onAlbumClick: (Int) -> Unit,
+    onAlbumClick: (String) -> Unit,
     userName : String = "Andres Soto",
     viewModel: HomeViewModel = viewModel()
 ){
@@ -69,13 +70,10 @@ fun HomeScreen(
     )
 }
 
-
-
-
 @Composable
 fun HomeScreenContent(
     albumState: UiState<List<Album>>,
-    onAlbumClick: (Int) -> Unit,
+    onAlbumClick: (String) -> Unit,
     userName: String = "Andres Soto"
 ){
     Box(
@@ -201,7 +199,7 @@ fun HomeHeader(userName: String) {
 }
 
 @Composable
-fun AlbumCard(album: Album, onClick: (Int) -> Unit) {
+fun AlbumCard(album: Album, onClick: (String) -> Unit) {
     Card(
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
@@ -211,7 +209,7 @@ fun AlbumCard(album: Album, onClick: (Int) -> Unit) {
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
-                model = album.imageUrl,
+                model = album.displayImageUrl,
                 contentDescription = album.title,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
@@ -251,7 +249,7 @@ fun AlbumCard(album: Album, onClick: (Int) -> Unit) {
 }
 
 @Composable
-fun RecentlyPlayedItem(album: Album, onClick: (Int) -> Unit) {
+fun RecentlyPlayedItem(album: Album, onClick: (String) -> Unit) {
     Card(
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
@@ -318,11 +316,11 @@ fun MiniPlayer(album: Album?, modifier: Modifier = Modifier, onClickPlay: (Album
 @Composable
 fun HomeScreenPreview() {
     val sampleAlbums = listOf(
-        Album(1, "Album One", "Artist A", "https://via.placeholder.com/150"),
-        Album(2, "Album Two", "Artist B", "https://via.placeholder.com/150"),
-        Album(3, "Album Three", "Artist C", "https://via.placeholder.com/150")
+        Album("1", "Album One", "Artist A", "https://via.placeholder.com/150"),
+        Album("2", "Album Two", "Artist B", "https://via.placeholder.com/150"),
+        Album("3", "Album Three", "Artist C", "https://via.placeholder.com/150")
     )
     MusicAppTheme {
-        HomeScreenContent(albumState=UiState.Success(sampleAlbums), onAlbumClick = {},)
+        HomeScreenContent(albumState=UiState.Success(sampleAlbums), onAlbumClick = { _: String -> },)
     }
 }

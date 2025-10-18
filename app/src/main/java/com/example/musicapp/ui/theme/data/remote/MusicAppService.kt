@@ -5,9 +5,9 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface MusicAppService{
-    @GET("api/albums")
+    @GET("albums")
     suspend fun getAlbums() : List<Album>
 
-    @GET("api/albums/id")
+    @GET("albums/{id}")
     suspend fun getAlbumDetail(@Path("id") id: String): Album
 }

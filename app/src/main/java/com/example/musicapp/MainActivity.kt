@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.musicapp.ui.theme.MusicAppTheme
 import com.example.musicapp.ui.theme.presentation.home.HomeScreen
+import com.example.musicapp.ui.theme.navigation.AppNavHost
 
 
 class MainActivity : ComponentActivity() {
@@ -16,14 +17,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MusicAppTheme {
-                // Ahora `albumId` es String (no Int)
-                HomeScreen(onAlbumClick = { albumId: String ->
-                    val intent = Intent().setClassName(this, "com.example.musicapp.DetailActivity")
-                    intent.putExtra("albumId", albumId) // guardar string
-                    if (intent.resolveActivity(packageManager) != null) {
-                        startActivity(intent)
-                    }
-                } as (Int) -> Unit)
+                AppNavHost()
             }
         }
     }
