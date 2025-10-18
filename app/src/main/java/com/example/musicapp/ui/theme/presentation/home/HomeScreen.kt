@@ -44,10 +44,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.example.musicapp.ui.theme.PrimaryDark
 import com.example.musicapp.ui.theme.data.model.Album
 import com.example.musicapp.ui.theme.presentation.common.UiState
 import com.example.musicapp.ui.theme.Purple80
 import com.example.musicapp.ui.theme.PurpleGrey40
+import com.example.musicapp.ui.theme.SecondaryLight
 
 @Composable
 fun HomeScreen(
@@ -72,7 +74,7 @@ fun HomeScreen(
                         .fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ){
-                    CircularProgressIndicator(color = Color.Blue)
+                    CircularProgressIndicator(color = PrimaryDark)
                 }
             }
             is UiState.Error -> {
@@ -138,7 +140,7 @@ fun HomeHeader(){
             .height(180.dp)
             .background(
                 brush = Brush.verticalGradient(
-                    colors = listOf(Purple80.copy(alpha = 0.9f), PurpleGrey40.copy(alpha = 0.5f)),
+                    colors = listOf(PrimaryDark.copy(alpha = 0.9f), SecondaryLight.copy(alpha = 0.5f)),
                     startY = 0f,
                     endY = 500f
                 ),
