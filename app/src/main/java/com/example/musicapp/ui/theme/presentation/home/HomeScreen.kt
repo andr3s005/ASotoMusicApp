@@ -20,9 +20,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -40,204 +42,209 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.example.musicapp.ui.theme.MusicAppTheme
 import com.example.musicapp.ui.theme.PrimaryDark
 import com.example.musicapp.ui.theme.data.model.Album
 import com.example.musicapp.ui.theme.presentation.common.UiState
-import com.example.musicapp.ui.theme.Purple80
-import com.example.musicapp.ui.theme.PurpleGrey40
 import com.example.musicapp.ui.theme.SecondaryLight
+import com.example.musicapp.ui.theme.presentation.common.MiniPlayer
 
 @Composable
 fun HomeScreen(
     onAlbumClick: (Int) -> Unit,
+    userName : String = "Andres Soto",
     viewModel: HomeViewModel = viewModel()
 ){
-    val albumState = viewModel.albumState.value
+    val albumState = viewModel.albumState
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF0F0F5))
-    ) {
-        HomeHeader()
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        when(albumState){
-            is UiState.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ){
-                    CircularProgressIndicator(color = PrimaryDark)
-                }
-            }
-            is UiState.Error -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ){
-                    Text(
-                        albumState.message,
-                        color = Color.Red,
-                        modifier = Modifier
-                            .padding(16.dp)
-                    )
-                }
-            }
-            is UiState.Success -> {
-                Text(
-                    "Albums",
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                )
-                LazyRow(
-                    contentPadding = PaddingValues(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    items(albumState.data) { album ->
-                        AlbumCard(album = album, onClick = onAlbumClick)
-                    }
-                }
-
-                Spacer(modifier = Modifier
-                    .height(24.dp))
-
-                Text(
-                    "Recently Played",
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                )
-
-                LazyColumn(
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier
-                        .weight(1f)
-                ) {
-                    items(albumState.data.take(5)) { album ->
-                        RecentlyPlayedItem(album = album, onClick = onAlbumClick)
-                    }
-                }
-            }
-        }
-    }
+    HomeScreenContent(
+        albumState = albumState.value,
+        onAlbumClick = onAlbumClick,
+        userName = userName
+    )
 }
 
+
+
+
 @Composable
-fun HomeHeader(){
+fun HomeScreenContent(
+    albumState: UiState<List<Album>>,
+    onAlbumClick: (Int) -> Unit,
+    userName: String = "Andres Soto"
+){
     Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(180.dp)
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(PrimaryDark.copy(alpha = 0.9f), SecondaryLight.copy(alpha = 0.5f)),
-                    startY = 0f,
-                    endY = 500f
-                ),
-                shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
-            )
-            .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
-            .padding(24.dp),
-        contentAlignment = Alignment.BottomStart
+            .fillMaxSize()
+            .background(Color(0xFFF7F3FB))
     ) {
-        Column {
-            Text(
-                "Bienvenido de vuelta",
-                color = Color.White.copy(alpha = 0.8f),
-                fontSize = 18.sp
-            )
-            Text(
-                "Andres Soto",
-                color = Color.White,
-                fontSize = 32.sp,
-                fontWeight = FontWeight.ExtraBold
-            )
-        }
-        Icon(
-            imageVector = Icons.Default.Settings,
-            contentDescription = "Ajustes",
-            tint = Color.White,
+        Column(
             modifier = Modifier
-                .align(Alignment.TopEnd)
-                .size(24.dp)
+                .fillMaxSize()
+        ) {
+            HomeHeader(userName = userName)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            when(albumState){
+                is UiState.Loading -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ){
+                        CircularProgressIndicator(color = PrimaryDark)
+                    }
+                }
+                is UiState.Error -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ){
+                        Text(
+                            albumState.message,
+                            color = Color.Red,
+                            modifier = Modifier
+                                .padding(16.dp)
+                        )
+                    }
+                }
+                is UiState.Success -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("Albums", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(start = 16.dp))
+                            Text("See more", color = PrimaryDark, modifier = Modifier.padding(end = 16.dp))
+                        }
+                        LazyRow(
+                            contentPadding = PaddingValues(horizontal = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            items(albumState.data) { album ->
+                                AlbumCard(album = album, onClick = onAlbumClick)
+                            }
+                        }
+
+                        Spacer(modifier = Modifier
+                            .height(24.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("Recently Played", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(start = 16.dp))
+                            Text("See more", color = PrimaryDark, modifier = Modifier.padding(end = 16.dp))
+                        }
+
+                        LazyColumn(
+                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                                .padding(bottom = 80.dp)
+                        ) {
+                            items(albumState.data.take(6)) { album ->
+                                RecentlyPlayedItem(album = album, onClick = onAlbumClick)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Mini player fijo abajo (ahora dentro del Box, por eso .align funciona)
+        MiniPlayer(
+            album = (if (albumState is UiState.Success && albumState.data.isNotEmpty()) albumState.data.first() else null),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(16.dp),
+            onClickPlay = { it?.let { album -> onAlbumClick(album.id) } }
         )
     }
 }
+@Composable
+fun HomeHeader(userName: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(170.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .clip(RoundedCornerShape(20.dp))
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(Color.Red, Color.Black),
+                )
+            )
+            .padding(20.dp)
+    ) {
+        Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu", tint = Color.White, modifier = Modifier.align(Alignment.TopStart))
+        Icon(imageVector = Icons.Default.Search, contentDescription = "Ajustes", tint = Color.White, modifier = Modifier.align(Alignment.TopEnd))
+        Column(modifier = Modifier.align(Alignment.BottomStart)) {
+            Text(text = "Good Morning!", color = Color.White.copy(alpha = 0.9f), fontSize = 14.sp)
+            Text(text = userName, color = Color.White, fontSize = 28.sp, style = MaterialTheme.typography.titleLarge)
+        }
+    }
+}
 
 @Composable
-fun AlbumCard(
-    album : Album, onClick: (Int) -> Unit
-){
+fun AlbumCard(album: Album, onClick: (Int) -> Unit) {
     Card(
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(16.dp),
         modifier = Modifier
-            .size(width = 200.dp, height = 280.dp)
+            .size(width = 200.dp, height = 260.dp)
             .clickable { onClick(album.id) },
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        elevation = CardDefaults.cardElevation(8.dp)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
                 model = album.imageUrl,
-                contentDescription = "Carátula de ${album.title}",
+                contentDescription = album.title,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f)),
-                            startY = 400f
-                        )
+            // degradado inferior
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color.Transparent,
+                            Color(0xAA000000)
+                        ), startY = 200f
                     )
-            )
-            Column(
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(12.dp)
-            ) {
-                Text(
-                    album.title,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    maxLines = 1
-                )
-                Text(
-                    album.artist,
-                    color = Color.White.copy(alpha = 0.8f),
-                    fontSize = 14.sp,
-                    maxLines = 1
-                )
+                ))
+            // texto inferior
+            Column(modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(12.dp)) {
+                Text(album.title, color = Color.White, style = MaterialTheme.typography.titleSmall)
+                Text(album.artist, color = Color.White.copy(alpha = 0.8f), style = MaterialTheme.typography.bodySmall)
             }
-
-            Button(
+            // boton circular play
+            IconButton(
                 onClick = { onClick(album.id) },
                 modifier = Modifier
-                    .align(Alignment.TopEnd)
+                    .align(Alignment.BottomEnd)
                     .padding(12.dp)
-                    .size(48.dp),
-                shape = CircleShape,
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE91E63))
+                    .size(44.dp)
+                    .clip(CircleShape)
+                    .background(PrimaryDark)
             ) {
-                Icon(
-                    imageVector = Icons.Default.PlayArrow,
-                    contentDescription = "Reproducir",
-                    tint = Color.White,
-                    modifier = Modifier.size(24.dp)
-                )
+                Icon(imageVector = Icons.Default.PlayArrow, contentDescription = "Play", tint = Color.White)
             }
         }
     }
@@ -249,53 +256,73 @@ fun RecentlyPlayedItem(album: Album, onClick: (Int) -> Unit) {
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp)
+            .height(72.dp)
             .clickable { onClick(album.id) },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(4.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Imagen pequeña con Coil
+        Row(modifier = Modifier
+            .fillMaxSize()
+            .padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(
                 model = album.imageUrl,
-                contentDescription = "Carátula de ${album.title}",
+                contentDescription = album.title,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(64.dp)
+                    .size(56.dp)
                     .clip(RoundedCornerShape(8.dp))
             )
-
             Spacer(modifier = Modifier.width(12.dp))
-
-            // Título y Artista
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    album.title,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 16.sp,
-                    maxLines = 1
-                )
-                Text(
-                    album.artist,
-                    color = Color.Gray,
-                    fontSize = 14.sp,
-                    maxLines = 1
-                )
+                Text(album.title, style = MaterialTheme.typography.bodyMedium)
+                Text("${album.artist} • Popular Song", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
             }
-
-            // Botón de Play
-            IconButton(onClick = { onClick(album.id) }) {
-                Icon(
-                    imageVector = Icons.Default.PlayArrow,
-                    contentDescription = "Play",
-                    tint = Color.Blue
-                )
+            IconButton(onClick = { /* abrir more menu */ }) {
+                Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Más", tint = Color.Gray)
             }
         }
+    }
+}
+
+@Composable
+fun MiniPlayer(album: Album?, modifier: Modifier = Modifier, onClickPlay: (Album?) -> Unit) {
+    if (album == null) return
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(64.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = PrimaryDark)
+    ) {
+        Row(modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 12.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                AsyncImage(model = album.imageUrl, contentDescription = album.title, modifier = Modifier
+                    .size(48.dp)
+                    .clip(RoundedCornerShape(8.dp)), contentScale = ContentScale.Crop)
+                Spacer(modifier = Modifier.width(12.dp))
+                Column {
+                    Text(album.title, color = Color.White, style = MaterialTheme.typography.bodyMedium)
+                    Text(album.artist, color = Color.White.copy(alpha = 0.85f), style = MaterialTheme.typography.bodySmall)
+                }
+            }
+            IconButton(onClick = { onClickPlay(album) }) {
+                Icon(imageVector = Icons.Default.PlayArrow, contentDescription = "Play", tint = Color.White)
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeScreenPreview() {
+    val sampleAlbums = listOf(
+        Album(1, "Album One", "Artist A", "https://via.placeholder.com/150"),
+        Album(2, "Album Two", "Artist B", "https://via.placeholder.com/150"),
+        Album(3, "Album Three", "Artist C", "https://via.placeholder.com/150")
+    )
+    MusicAppTheme {
+        HomeScreenContent(albumState=UiState.Success(sampleAlbums), onAlbumClick = {},)
     }
 }

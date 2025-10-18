@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -61,85 +62,80 @@ fun DetailScreen(
 ) {
     val detailState = viewModel.detailAlbumState.value
 
-    // Ejecuta la llamada a la API al iniciar la pantalla con el ID recibido
     LaunchedEffect(albumId) {
         viewModel.fetchAlbumDetail(albumId)
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+
         when (detailState) {
             is UiState.Loading -> {
-                Box(modifier = Modifier.fillMaxSize().weight(1f), contentAlignment = Alignment.Center) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator(color = PrimaryDark)
                 }
             }
             is UiState.Error -> {
-                Box(modifier = Modifier.fillMaxSize().weight(1f), contentAlignment = Alignment.Center) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(detailState.message, color = Color.Red, modifier = Modifier.padding(16.dp))
                 }
             }
             is UiState.Success -> {
-                val album = detailState.data
+                DetailScreenContent(album = detailState.data)
 
-                // 1. Header de Detalle (Imagen grande, Scrim, Título, Acciones)
-                DetailHeader(album = album)
+            }
+        }
+}
 
-                // 2. Contenido Principal (Scrollable)
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f) // Ocupa el espacio restante
-                        .padding(horizontal = 16.dp),
-                    contentPadding = PaddingValues(top = 16.dp, bottom = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    // Card "About this album"
-                    item {
-                        DetailAboutCard(album)
-                    }
+@Composable
+fun DetailScreenContent(album: Album) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        // Header (imagen grande, scrim, título y acciones)
+        DetailHeader(album = album)
 
-                    // Chip/Etiqueta
-                    item {
-                        AssistChip(
-                            onClick = { /* Acción ficticia */ },
-                            label = { Text("Artist: ${album.artist}", fontWeight = FontWeight.SemiBold) },
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Default.Person,
-                                    contentDescription = "Artista",
-                                    Modifier.size(AssistChipDefaults.IconSize)
-                                )
-                            },
-                            colors = AssistChipDefaults.assistChipColors(
-                                containerColor = PrimaryDark.copy(alpha = 0.1f),
-                                labelColor = PrimaryDark
-                            )
-                        )
-                    }
+        // Contenido principal scrollable
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(horizontal = 16.dp),
+            contentPadding = PaddingValues(top = 16.dp, bottom = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            item { DetailAboutCard(album) }
 
-                    // Título de la lista de canciones
-                    item {
-                        Text(
-                            "Track List (10 canciones ficticias)",
-                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                            modifier = Modifier.padding(vertical = 8.dp)
-                        )
-                    }
+            item {
+                AssistChip(
+                    onClick = { /* acción */ },
+                    label = { Text("Artist: ${album.artist}", fontWeight = FontWeight.SemiBold) },
+                    leadingIcon = {
+                        Icon(Icons.Default.Person, contentDescription = "Artista", Modifier.size(AssistChipDefaults.IconSize))
+                    },
+                    colors = AssistChipDefaults.assistChipColors(
+                        containerColor = PrimaryDark.copy(alpha = 0.1f),
+                        labelColor = PrimaryDark
+                    )
+                )
+            }
 
-                    // 3. LazyColumn con 10 canciones ficticias
-                    items(10) { index ->
-                        val track = Track(
-                            title = "${album.title} • Track ${index + 1}",
-                            artist = album.artist,
-                            trackNumber = index + 1
-                        )
-                        TrackListItem(album = album, track = track)
-                    }
-                }
+            item {
+                Text(
+                    "Track List (10 canciones ficticias)",
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+            }
+
+            items(10) { index ->
+                val track = Track(
+                    title = "${album.title} • Track ${index + 1}",
+                    artist = album.artist,
+                    trackNumber = index + 1
+                )
+                TrackListItem(album = album, track = track)
             }
         }
     }
 }
+
 
 
 @Composable
@@ -292,4 +288,16 @@ fun TrackListItem(album: Album, track: Track) {
             )
         }
     }
+}
+@Preview(showBackground = true)
+@Composable
+fun DetailScreenPreview() {
+    val sampleAlbum = Album (
+        id = 1,
+        title = "Sample Album",
+        artist = "Sample Artist",
+        imageUrl = "https://via.placeholder.com/300",
+        description = "This is a sample album used for previewing the DetailScreen composable."
+    )
+    DetailScreenContent(album = sampleAlbum)
 }
